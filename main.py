@@ -24,8 +24,8 @@ UPLOAD_PATH = BASE_PATH / "uploads"
 RESULT_PATH = BASE_PATH / "results"
 
 # [Supabase 설정] 본인의 정보로 교체 필수
-SUPABASE_URL = "https://kggpojguiwnzmikibhzn.supabase.co"
-SUPABASE_KEY = "sb_publishable_rFVuNo9uGALWqk5cUIEoAw_lXR2S2jH"
+SUPABASE_URL = "h.co"
+SUPABASE_KEY = "s2jH"
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 class CoreWorkCloudAnalyzer:
