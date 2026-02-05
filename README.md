@@ -31,22 +31,17 @@
 1. **시스템 의존성 설치**  
    KoNLPy 가동(JVM)을 위해 Java(JDK) 설치가 필수입니다.  
 
-brew install openjdk
-text
 
 2. **라이브러리 설치**  
 구형 SDK와의 충돌을 방지하기 위해 정리가 필요합니다.  
-
-구형 SDK 제거
 pip uninstall google-generativeai
-필수 라이브러리 통합 설치
-pip install -U google-genai pandas easyocr pdfplumber konlpy pynput python-dotenv youtube-transcript-api openpyxl
-text
+
 
 3. **실행 루틴**  
 - uploads/ 폴더에 분석할 파일을 넣거나 sns_links.txt에 유튜브 주소를 입력합니다.
 - `python main.py`를 실행하여 정제된 명사를 추출합니다.
 - `python smart_merge_v3.py`를 실행하여 AI 심층 분석 및 DB 저장을 완료합니다.
+
 
 ## 🧠 지속적 유지보수 가이드 (Maintenance with AI)
 
@@ -55,6 +50,7 @@ text
 - **프롬프트 고도화**: 분류 정확도를 높이려면 smart_merge_v3.py 내의 전문가 페르소나 및 분류 원칙 세션을 수정하십시오.
 - **지속적 학습**: AI가 오답을 반복할 경우 db_manager.py의 upsert_word 로직에 예외 필터를 추가하거나 프롬프트에 '오답 사례'를 명시하십시오.
 - **성능 최적화**: 대량 처리가 필요할 경우 main.py의 easyocr 배치 사이즈를 조정하여 M1 GPU 부하를 관리하십시오.
+
 
 ## 📝 포트폴리오 핵심 지표 (Key Insights)
 
