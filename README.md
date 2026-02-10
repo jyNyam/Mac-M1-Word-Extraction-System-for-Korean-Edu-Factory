@@ -1,8 +1,4 @@
-기존 초안을 바탕으로, 우리가 함께 정교화한 **'KS 표준 연계', '3단계 환각 방지', 'Human-in-the-Loop(선순환 구조)'** 로직을 완벽하게 반영한 **최종 수정안**입니다.
 
-바로 `README.md` 파일에 복사해서 사용하시면 됩니다.
-
----
 
 # 🏭 Korean Edu Factory: Root Industry & KIIP AI Lexicon Analyzer (v3.5)
 
