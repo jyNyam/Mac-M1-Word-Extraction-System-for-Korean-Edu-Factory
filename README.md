@@ -1,63 +1,154 @@
-# 🏭 Korean Edu Factory: Root Industry & KIIP AI Lexicon Analyzer (v3.0)
+기존 초안을 바탕으로, 우리가 함께 정교화한 **'KS 표준 연계', '3단계 환각 방지', 'Human-in-the-Loop(선순환 구조)'** 로직을 완벽하게 반영한 **최종 수정안**입니다.
 
-본 프로젝트는 MacBook Pro M1 환경의 로컬 컴퓨팅 자원과 Gemini 2.5 Pro의 추론 능력을 결합한 지능형 어휘 분석 시스템입니다.
-산업 현장 문서(PDF/이미지) 및 SNS 콘텐츠(YouTube)에서 핵심 어휘를 추출하고, 이를 전문적인 기술 해설이 담긴 Glossary DB로 자산화하는 것을 목표로 합니다.
+바로 `README.md` 파일에 복사해서 사용하시면 됩니다.
+
+---
+
+# 🏭 Korean Edu Factory: Root Industry & KIIP AI Lexicon Analyzer (v3.5)
+
+**[프로젝트 개요]** 본 프로젝트는 **MacBook Pro M1 (Apple Silicon)**의 로컬 자원과 **Google Gemini 1.5 Flash**의 추론 능력을 결합한 **하이브리드 지능형 어휘 분석 시스템**입니다.
+
+산업 현장 문서(PDF/이미지)에서 핵심 어휘를 추출하고, **① KS 표준 기반의 지식 필터링**, **② 현장 반장에 최적화된 페르소나**, **③ 인간 검수(Human-in-the-Loop)** 과정을 거쳐 외국인 근로자(E-9)를 위한 **고신뢰성 Glossary DB**로 자산화합니다.
+
+---
 
 ## 💻 시스템 환경 (Environment)
 
-- **Hardware**: MacBook Pro M1 (GPU 가속 MPS 활용)
-- **Storage**: External SSD (/Volumes/Macbook_dat/Python/CoreWorkWord)
-- **Language**: Python 3.12+
-- **Database**: SQLite3 (지속적 학습 및 데이터 누적)
+* **Hardware**: MacBook Pro M1 (GPU 가속 MPS 활용)
+* **Architecture**: Local Pre-processing (OCR/NLP) + Cloud Inference (Gemini API)
+* **Storage**: External SSD (`/Volumes/Macbook_dat/Python/CoreWorkWord`)
+* **Knowledge Base**: KS 표준 규격 및 산업안전보건법 기반 **Ground Truth** 탑재
+* **Database**: SQLite3 (골든 데이터 보존 및 선순환 구조)
 
 ## 🛠 주요 기술 스택 (Tech Stack)
 
-- **NLP**: KoNLPy (Okt) - 형태소 분석을 통한 노이즈 제거 및 명사 정밀 추출
-- **OCR**: EasyOCR - M1 GPU 가속 기반의 고성능 이미지 텍스트 인식
-- **AI**: Google Gemini 2.5 Pro - 심층 구조화 프롬프트 기법 적용
-- **Infra**: youtube-transcript-api, pdfplumber, python-dotenv, openpyxl
+* **AI Engine**: `Google Gemini 1.5 Flash` - JSON Mode 강제 및 Temperature 제어로 환각 최소화
+* **Prompt Eng**: **Method** - 페르소나 부여 및 구조화된 출력 설계
+* **NLP**: `KoNLPy (Okt)` - 불용어 제거 및 산업 명사 정밀 추출
+* **OCR**: `EasyOCR` - M1 Metal(MPS) 가속 기반의 텍스트 인식
+* **Verification**: **3-Stage Filtering** (Ground Truth 매칭 → AI 추론 → 교차 검증)
+* **Utils**: `pandas`, `openpyxl`, `python-dotenv`, `pdfplumber`
+
+---
 
 ## 📂 프로젝트 구조 (Structure)
 
-- **main.py**: 데이터 추출 엔진. OCR 및 유튜브 자막에서 명사를 추출하고 KoNLPy로 정제합니다.
-- **db_manager.py**: 데이터 관리자. SQLite DB 연동, CRUD 처리 및 과거 분석 사례(Few-shot)를 관리합니다.
-- **smart_merge_v3.py**: 지능형 분류기. Gemini 2.5 Pro를 통해 실무적 해설을 생성하고 DB에 동기화합니다.
-- **glossary.db**: 분석된 모든 어휘와 해설이 누적되는 지식 베이스 파일입니다.
-- **uploads/**: 분석 대상 원본 파일(PDF, JPG, PNG, TXT) 저장소입니다.
-- **results/**: 중간 결과물(raw_cleaned.csv) 및 리포트가 저장됩니다.
+이 프로젝트는 **데이터의 흐름(Flow)**과 **무결성(Integrity)**을 중심으로 설계되었습니다.
+
+* **`config.py` (Knowledge Core)**:
+* 프로젝트 경로 설정 및 **Ground Truth(뿌리산업 지식 사전)** 정의.
+* KS 규격 코드와 현장 키워드가 매핑된 기준점 역할.
+
+
+* **`db_management.py` (The Vault)**:
+* SQLite DB 스키마 관리 (`industrial_glossary`).
+* **골든 데이터 보호 로직**: 사람이 검증한 데이터(`is_verified=1`)는 AI가 덮어쓰지 않도록 보호.
+
+
+* **`main.py` (Miner)**:
+* `uploads/` 폴더의 PDF/이미지에서 텍스트 추출.
+* OCR 및 형태소 분석을 통해 1차 정제된 CSV 생성.
+
+
+* **`smart_merge.py` (AI Brain)**:
+* **하이브리드 분석 엔진**: KS 데이터 주입(RAG) + 제임스 타일즈 페르소나.
+* JSON 파싱 방어 코드 및 신뢰도(상/중/하) 자동 산정.
+
+
+* **`export_report.py` (Human Bridge)**:
+* 검수가 필요한 데이터만 엑셀로 추출 및 승인된 데이터를 DB로 회귀(Feedback Loop).
+
+
+
+---
 
 ## 📦 설치 및 실행 (Installation & Usage)
 
-1. **시스템 의존성 설치**  
-   KoNLPy 가동(JVM)을 위해 Java(JDK) 설치가 필수입니다.  
+### 1. 시스템 의존성 설치
+
+M1 환경에서의 KoNLPy 가동을 위해 Java(JDK)가 필요합니다.
+
+```bash
+brew install openjdk
+
+```
+
+### 2. 라이브러리 설치
+
+최신 Gemini SDK와 데이터 처리 패키지를 설치합니다.
+
+```bash
+pip install -U google-generativeai pandas easyocr pdfplumber konlpy python-dotenv openpyxl
+
+```
+
+### 3. 환경 변수 설정
+
+`.env` 파일을 생성하고 Google API Key를 입력합니다.
+
+```text
+GOOGLE_API_KEY=your_api_key_here
+
+```
+
+### 4. 실행 루틴 (Workflow)
+
+데이터 무결성을 위해 반드시 **아래 순서**대로 실행하십시오.
+
+1. **초기화 (Config)**: 폴더 생성 및 지식 베이스 로드 확인
+```bash
+python config.py
+
+```
 
 
-2. **라이브러리 설치**  
-구형 SDK와의 충돌을 방지하기 위해 정리가 필요합니다.  
-pip uninstall google-generativeai
+2. **DB 구축 (Schema)**: 테이블 생성 (기존 데이터 보호)
+```bash
+python db_management.py
+
+```
 
 
-3. **실행 루틴**  
-- uploads/ 폴더에 분석할 파일을 넣거나 sns_links.txt에 유튜브 주소를 입력합니다.
-- `python main.py`를 실행하여 정제된 명사를 추출합니다.
-- `python smart_merge_v3.py`를 실행하여 AI 심층 분석 및 DB 저장을 완료합니다.
+3. **데이터 추출 (Mining)**: `uploads/` 폴더 내 파일 분석
+```bash
+python main.py
+
+```
 
 
-## 🧠 지속적 유지보수 가이드 (Maintenance with AI)
+4. **AI 분석 (Analysis)**: KS 기반 검증 및 자산화
+```bash
+python smart_merge.py
 
-이 프로젝트는 AI와의 협업을 통해 진화합니다. 기능 수정 시 아래 가이드를 활용하십시오.
-
-- **프롬프트 고도화**: 분류 정확도를 높이려면 smart_merge_v3.py 내의 전문가 페르소나 및 분류 원칙 세션을 수정하십시오.
-- **지속적 학습**: AI가 오답을 반복할 경우 db_manager.py의 upsert_word 로직에 예외 필터를 추가하거나 프롬프트에 '오답 사례'를 명시하십시오.
-- **성능 최적화**: 대량 처리가 필요할 경우 main.py의 easyocr 배치 사이즈를 조정하여 M1 GPU 부하를 관리하십시오.
+```
 
 
-## 📝 포트폴리오 핵심 지표 (Key Insights)
+5. **검수 및 선순환 (Feedback)**: 엑셀 리포트 생성 및 DB 재반영
+```bash
+python export_report.py
+
+```
+
+
+
+---
+
+## 🧠 핵심 차별화 포인트 (Key Insights)
 
 | 지표 | 설명 |
-|------|------|
-| **정확성 (Accuracy)** | 뿌리산업 10대 핵심 기술(주조, 금형 등)을 명확히 정의하여 AI 분류의 환각(Hallucination) 현상을 차단함. |
-| **공공성 (Public Value)** | 외국인 근로자를 타겟으로 KIIP 단계별 어휘를 구분하여 기술 교육과 사회 통합을 동시에 지원함. |
-| **공정성 (Fairness)** | 특정 국적·문화에 대한 편견이나 혐오 표현이 배제되도록 프롬프트 내 윤리 지침을 강화함. |
-| **신뢰성 (Reliability)** | DB 내 과거 우수 분석 데이터(Few-shot)를 프롬프트에 자동 주입하여 일관된 해설 품질을 유지함.|
-| **데이터 자산화** | 단순 문서 분석을 넘어, 시간이 흐를수록 정교해지는 독자적인 산업 지식 베이스(Glossary DB)를 구축함.
+| --- | --- |
+| **🛡️ 환각 방지 (Anti-Hallucination)** | `config.py`에 정의된 **Ground Truth(KS 표준)**와 교차 검증하여 AI의 거짓 생성을 3단계로 차단함. |
+| **💎 골든 데이터 (Golden Data)** | 인간이 검수한 데이터는 **'검증됨(Verified)'** 상태로 격상되어, 이후 AI가 재분석하더라도 변형되지 않도록 보호함. |
+| **👷 안전 최우선 (Safety First)** | 최적의 페르소나를 통해 **현장 반장님의 "안전 지시(Command)"** 말투를 구현, 실무 적합성 강화. |
+| **🔄 선순환 구조 (Human-in-the-Loop)** | [AI 분석] → [엑셀 검수] → [DB 재학습]으로 이어지는 사이클을 통해 데이터 품질이 지속적으로 향상됨. |
+| **🌏 공공성 (Public Value)** | 외국인 근로자(E-9) 눈높이에 맞춘 '초등학생 수준의 해설'과 '일본어 잔재 병기'로 교육적 가치 실현. |
+
+---
+
+## 📝 유지보수 가이드 (Maintenance)
+
+* **지식 확장**: 새로운 직무(예: 표면처리) 추가 시, `config.py`의 `ROOT_INDUSTRIES` 딕셔너리만 수정하면 됩니다.
+* **프롬프트 튜닝**: `smart_merge.py` 내의 `prompt` 변수에서 대상 독자나 어조를 수정할 수 있습니다.
+* **API 관리**: `smart_merge.py`에는 `time.sleep()`을 통한 부하 조절 기능이 포함되어 있습니다. 데이터 양에 따라 배치 사이즈(Default: 50)를 조절하세요.
+
+> *이 프로젝트는 현장의 목소리와 AI의 기술을 연결하는 가교 역할을 수행합니다.*
