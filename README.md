@@ -2,7 +2,7 @@
 
 # 🏭 Korean Edu Factory: Root Industry & KIIP AI Lexicon Analyzer (v3.5)
 
-**[프로젝트 개요]** 본 프로젝트는 **MacBook Pro M1 (Apple Silicon)**의 로컬 자원과 **Google Gemini 1.5 Flash**의 추론 능력을 결합한 **하이브리드 지능형 어휘 분석 시스템**입니다.
+**[프로젝트 개요]** 본 프로젝트는 **MacBook Pro M1 (Apple Silicon)**의 로컬 자원과 **Google Gemini 2.5 Flash**의 추론 능력을 결합한 **하이브리드 지능형 어휘 분석 시스템**입니다.
 
 산업 현장 문서(PDF/이미지)에서 핵심 어휘를 추출하고, **① KS 표준 기반의 지식 필터링**, **② 현장 반장에 최적화된 페르소나**, **③ 인간 검수(Human-in-the-Loop)** 과정을 거쳐 외국인 근로자(E-9)를 위한 **고신뢰성 Glossary DB**로 자산화합니다.
 
@@ -18,7 +18,7 @@
 
 ## 🛠 주요 기술 스택 (Tech Stack)
 
-* **AI Engine**: `Google Gemini 1.5 Flash` - JSON Mode 강제 및 Temperature 제어로 환각 최소화
+* **AI Engine**: `Google Gemini 2.5 Flash` - JSON Mode 강제 및 Temperature 제어로 환각 최소화
 * **Prompt Eng**: **Method** - 페르소나 부여 및 구조화된 출력 설계
 * **NLP**: `KoNLPy (Okt)` - 불용어 제거 및 산업 명사 정밀 추출
 * **OCR**: `EasyOCR` - M1 Metal(MPS) 가속 기반의 텍스트 인식
