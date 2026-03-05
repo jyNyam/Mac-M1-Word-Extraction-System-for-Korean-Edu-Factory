@@ -29,7 +29,7 @@
 
 ## 📂 프로젝트 구조 (Structure)
 
-이 프로젝트는 **데이터의 흐름(Flow)**과 **무결성(Integrity)**을 중심으로 설계되었습니다.
+이 프로젝트는 데이터의 흐름(Flow)과 무결성(Integrity)을 중심으로 설계되었습니다.
 
 * **`config.py` (Knowledge Core)**:
 * 프로젝트 경로 설정 및 **Ground Truth(뿌리산업 지식 사전)** 정의.
