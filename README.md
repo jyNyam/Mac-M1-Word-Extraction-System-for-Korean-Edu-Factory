@@ -1,150 +1,105 @@
 
+# CoreWorkWord: Root Industry On-Device AI Lexicon System
 
-# 🏭 Korean Edu Factory: Root Industry & KIIP AI Lexicon Analyzer (v3.5)
+**CoreWorkWord**는 뿌리산업(용접, 주조, 금형 등) 현장의 은어 및 속어를 수집하여 KS 표준용어로 매핑하고, 외국인 근로자(E-9)를 위한 쉬운 해설과 안전 지시용어를 생성하는 **100% 로컬 자립형 데이터 자산화 시스템**입니다. v3.5 아키텍처는 외부 클라우드 API 의존성을 제거하고 **Apple Silicon(M1/M2/M3)** 기반의 온디바이스 추론으로 전환하여 데이터 주권과 경제성을 동시에 확보했습니다.
 
-**[프로젝트 개요]** 본 프로젝트는 MacBook Pro M1 (Apple Silicon)의 로컬 자원과 Google Gemini의 추론 능력을 결합한 **하이브리드 지능형 어휘 분석 시스템**입니다.
+## 📌 Project Overview
 
-산업 현장 문서(PDF/이미지)에서 핵심 어휘를 추출하고, **① KS 표준 기반의 지식 필터링**, **② 현장 반장에 최적화된 페르소나**, **③ 인간 검수(Human-in-the-Loop)** 과정을 거쳐 외국인 근로자(E-9)를 위한 **고신뢰성 Glossary DB**로 자산화합니다.
+산업 현장의 소통 장벽 해소 및 안전사고 예방을 위해 외부 데이터 유출이 없는 폐쇄형 AI 환경에서 산업 지식 베이스(Glossary)를 구축합니다.
 
----
-
-## 💻 시스템 환경 (Environment)
-
-* **Hardware**: MacBook Pro M1 (GPU 가속 MPS 활용)
-* **Architecture**: Local Pre-processing (OCR/NLP) + Cloud Inference (Gemini API)
-* **Storage**: External SSD (`/Volumes/Macbook_dat/Python/CoreWorkWord`)
-* **Knowledge Base**: KS 표준 규격 및 산업안전보건법 기반 **Ground Truth** 탑재
-* **Database**: SQLite3 (골든 데이터 보존 및 선순환 구조)
-
-## 🛠 주요 기술 스택 (Tech Stack)
-
-* **AI Engine**: `Google Gemini 2.5 Flash` - JSON Mode 강제 및 Temperature 제어로 환각 최소화
-* **Prompt Eng**: **Method** - 페르소나 부여 및 구조화된 출력 설계
-* **NLP**: `KoNLPy (Okt)` - 불용어 제거 및 산업 명사 정밀 추출
-* **OCR**: `EasyOCR` - M1 Metal(MPS) 가속 기반의 텍스트 인식
-* **Verification**: **3-Stage Filtering** (Ground Truth 매칭 → AI 추론 → 교차 검증)
-* **Utils**: `pandas`, `openpyxl`, `python-dotenv`, `pdfplumber`
-
----
-
-## 📂 프로젝트 구조 (Structure)
-
-이 프로젝트는 데이터의 흐름(Flow)과 무결성(Integrity)을 중심으로 설계되었습니다.
-
-* **`config.py` (Knowledge Core)**:
-* 프로젝트 경로 설정 및 **Ground Truth(뿌리산업 지식 사전)** 정의.
-* KS 규격 코드와 현장 키워드가 매핑된 기준점 역할.
-
-
-* **`db_management.py` (The Vault)**:
-* SQLite DB 스키마 관리 (`industrial_glossary`).
-* **골든 데이터 보호 로직**: 사람이 검증한 데이터(`is_verified=1`)는 AI가 덮어쓰지 않도록 보호.
-
-
-* **`main.py` (Miner)**:
-* `uploads/` 폴더의 PDF/이미지에서 텍스트 추출.
-* OCR 및 형태소 분석을 통해 1차 정제된 CSV 생성.
-
-
-* **`smart_merge.py` (AI Brain)**:
-* **하이브리드 분석 엔진**: KS 데이터 주입(RAG) + 제임스 타일즈 페르소나.
-* JSON 파싱 방어 코드 및 신뢰도(상/중/하) 자동 산정.
-
-
-* **`export_report.py` (Human Bridge)**:
-* 검수가 필요한 데이터만 엑셀로 추출 및 승인된 데이터를 DB로 회귀(Feedback Loop).
+* **Target**: 1차. 대한민국 뿌리산업 현장 관리자 및 외국인 근로자(E-9).
+* **Core Value**:
+* **Zero Cost**: 외부 API 호출 없이 로컬 LLM(Gemma 2) 활용.
+* **Data Sovereignty**: 기업 내부 데이터 유출 0% 보장 (100% Offline).
+* **High Reliability**: KS 표준(Ground Truth) 기반 검증 및 Human-in-the-Loop(HiTL) 결합.
 
 
 
----
+## 💻 System Environment
 
-## 📦 설치 및 실행 (Installation & Usage)
+* **Hardware**: MacBook Pro M1/M2/M3 (Apple Silicon 최적화).
+* **Inference Engine**: Ollama (Model: `gemma2:2b`).
+* **Acceleration**: Apple Metal Performance Shaders (MPS) 가속 활용.
+* **Database**: SQLite3 (골든 데이터 보존 및 이력 관리).
 
-### 1. 시스템 의존성 설치
+## 🛠 Tech Stack
 
-M1 환경에서의 KoNLPy 가동을 위해 Java(JDK)가 필요합니다.
+* **NLP/Extraction**: Mecab (고속 형태소 분석), KR-WordRank (핵심어 추출), KcBERT (유사도 기반 직무 분류).
+* **Multi-modal**: EasyOCR (이미지 인식), pdfplumber (문서 파싱), OpenAI Whisper (현장 음성 전사).
+* **AI Logic**: James Tiles Prompt Engineering Method (구조화된 페르소나 설계).
+* **Language**: Python 3.12+.
+
+## 📂 System Architecture
+
+데이터의 흐름과 무결성을 보장하기 위해 5개 모듈로 분산 설계되었습니다.
+
+1. **`config.py` (Knowledge Core)**: 산업별 핵심 키워드, KS 규격 코드, 법적 근거 등 지식 베이스(Ground Truth) 정의.
+2. **`db_management.py` (The Vault)**: '골든 데이터 보호 쉴드' 로직 탑재 (인간 검수 완료 데이터의 AI 덮어쓰기 방지).
+3. **`main.py` (ETL Processor)**: OCR/PDF/SNS 데이터에서 명사 추출 및 KcBERT 기반 직무 자동 분류.
+4. **`smart_merge.py` (Local AI Engine)**: Ollama 기반 로컬 LLM을 통한 JSON 형태의 해설 및 안전 지시 명령 생성.
+5. **`export_report.py` (Human-in-the-Loop)**: 검수용 엑셀 리포트 추출 및 '승인' 데이터의 DB 선순환 반영(Feedback Loop).
+
+## 📦 Installation & Setup
+
+### 1. Prerequisite (Apple Silicon)
+
+M1 Mac의 GPU 가속과 KoNLPy 가동을 위해 JDK 및 환경 설정이 필요합니다.
 
 ```bash
+# JDK 설치 및 심볼릭 링크 설정
 brew install openjdk
+sudo ln -sfn $(brew --prefix)/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+
+# Mecab 엔진 및 사전 설치
+brew install mecab mecab-ko-dic
+
+# Ollama 설치 후 모델 다운로드
+ollama pull gemma2:2b
 
 ```
 
-### 2. 라이브러리 설치
-
-최신 Gemini SDK와 데이터 처리 패키지를 설치합니다.
+### 2. Dependencies
 
 ```bash
-pip install -U google-generativeai pandas easyocr pdfplumber konlpy python-dotenv openpyxl
+pip install -U pandas openpyxl konlpy mecab-python3 easyocr pymupdf torch sentence-transformers ollama
 
 ```
 
-### 3. 환경 변수 설정
+## 🚀 Workflow (실행 가이드)
 
-`.env` 파일을 생성하고 Google API Key를 입력합니다.
+데이터 무결성을 위해 아래 순서대로 실행을 권장합니다.
 
-```text
-GOOGLE_API_KEY=your_api_key_here
-
-```
-
-### 4. 실행 루틴 (Workflow)
-
-데이터 무결성을 위해 반드시 **아래 순서**대로 실행하십시오.
-
-1. **초기화 (Config)**: 폴더 생성 및 지식 베이스 로드 확인
-```bash
-python config.py
-
-```
-
-
-2. **DB 구축 (Schema)**: 테이블 생성 (기존 데이터 보호)
-```bash
-python db_management.py
-
-```
-
-
-3. **데이터 추출 (Mining)**: `uploads/` 폴더 내 파일 분석
+1. **지식 베이스 초기화**: `python config.py` 실행으로 폴더 구조 및 Ground Truth 로드 확인.
+2. **원천 데이터 투입**: `uploads/` 폴더에 분석할 원본 파일 업로드.
+3. **데이터 추출 및 자동 분류**:
 ```bash
 python main.py
 
 ```
 
 
-4. **AI 분석 (Analysis)**: KS 기반 검증 및 자산화
+4. **로컬 AI 분석 및 자산화**:
 ```bash
 python smart_merge.py
 
 ```
 
 
-5. **검수 및 선순환 (Feedback)**: 엑셀 리포트 생성 및 DB 재반영
-```bash
-python export_report.py
-
-```
+5. **인간 검수 및 골든 데이터 승격**:
+* `export_report.py` 실행 후 생성된 엑셀에서 '승인' 기입 후 저장.
+* 피드백 로직을 통해 최종 데이터베이스(`is_verified=1`) 확정.
 
 
 
----
+## 📝 Key Features
 
-## 🧠 핵심 차별화 포인트 (Key Insights)
-
-| 지표 | 설명 |
-| --- | --- |
-| **🛡️ 환각 방지 (Anti-Hallucination)** | `config.py`에 정의된 **Ground Truth(KS 표준)**와 교차 검증하여 AI의 거짓 생성을 3단계로 차단함. |
-| **💎 골든 데이터 (Golden Data)** | 인간이 검수한 데이터는 **'검증됨(Verified)'** 상태로 격상되어, 이후 AI가 재분석하더라도 변형되지 않도록 보호함. |
-| **👷 안전 최우선 (Safety First)** | 최적의 페르소나를 통해 **현장 반장님의 "안전 지시(Command)"** 말투를 구현, 실무 적합성 강화. |
-| **🔄 선순환 구조 (Human-in-the-Loop)** | [AI 분석] → [엑셀 검수] → [DB 재학습]으로 이어지는 사이클을 통해 데이터 품질이 지속적으로 향상됨. |
-| **🌏 공공성 (Public Value)** | 외국인 근로자(E-9) 눈높이에 맞춘 '초등학생 수준의 해설'과 '일본어 잔재 병기'로 교육적 가치 실현. |
+* **Anti-Hallucination**: KS 표준 규격 데이터와 AI 추론 결과를 교차 검증하여 환각 현상 억제.
+* **Safety Command Implementation**: 현장 반장의 구어체(명령조)를 반영하여 실무 활용성 극대화.
+* **Data Integrity**: `is_verified` 플래그를 통한 데이터 생애주기 관리.
 
 ---
 
-## 📝 유지보수 가이드 (Maintenance)
+**Maintainer**: Heo Jin-yeong (HR STANDARD).
+**Specialty**: Korean Language Education & AI-driven Industrial Content Development.
 
-* **지식 확장**: 새로운 직무(예: 표면처리) 추가 시, `config.py`의 `ROOT_INDUSTRIES` 딕셔너리만 수정하면 됩니다.
-* **프롬프트 튜닝**: `smart_merge.py` 내의 `prompt` 변수에서 대상 독자나 어조를 수정할 수 있습니다.
-* **API 관리**: `smart_merge.py`에는 `time.sleep()`을 통한 부하 조절 기능이 포함되어 있습니다. 데이터 양에 따라 배치 사이즈(Default: 50)를 조절하세요.
-
-> *이 프로젝트는 현장의 목소리와 AI의 기술을 연결하는 가교 역할을 수행합니다.*
+---
